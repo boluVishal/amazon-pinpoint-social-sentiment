@@ -1,27 +1,24 @@
-## Amazon Pinpoint Social Sentiment
+# Amazon Pinpoint Social Sentiment
 
-Use machine learning to understand social media user sentiment and create marketing campaigns to engage promoters and detractors.
+Track what people are saying about your brand on Twitter, score the sentiment with Amazon Comprehend, and automatically reach out to promoters and detractors via Amazon Pinpoint push notifications — all serverless.
 
-## Use Case
-Imagine you are a brand with a large web and mobile presence. You want to monitor the conversation around your brand on social media and message your promoters/influencers and detractors across multiple channels. AWS and Pinpoint provide a great foundation for doing so easily and at massive scale. 
+## How it works
+
+An EC2 instance listens to the Twitter streaming API and pipes tweets into Kinesis. Lambda picks them up, runs them through Comprehend for sentiment scoring, and stores results in Elasticsearch. Positive users get registered as Pinpoint endpoints tagged `Sentiment=Positive` so you can target them with campaigns. There's also a React Native iOS app for browsing the feed live.
 
 ## Architecture
-![Screenshot](images/arch.png)
 
-## Prerequisites
+![Architecture](images/arch.png)
 
-You need the following:
+## Before you start
 
-* A mobile app that uses Twitter's APIs and/or SDK for authentication and tweet ingestion
-* A macOS-based computer and physical iOS device (the Simulator that's included with Xcode isn't sufficient for testing this solution). 
-* Xcode, Node.js, npm and CocoaPods installed on your macOS-based computer.
-    * To download Xcode, see https://developer.apple.com/download/.
-    * To download Node.js and npm, see https://nodejs.org/en/. Download the latest Long-Term Support (LTS) version for macOS.
-    * Install CocoaPods via the Mac terminal with `sudo gem install cocoapods`
-* The AWS Command Line Interface (AWS CLI) installed and configured on your macOS-based computer. For information about installing the AWS CLI, see [Installing the AWS Command Line Interface](https://docs.aws.amazon.com/cli/latest/userguide/installing.html). For information about setting up the AWS CLI, see [Configuring the AWS CLI](https://docs.aws.amazon.com/cli/latest/userguide/cli-chap-getting-started.html).
-* An AWS account with sufficient permissions to create the resources shown in the diagram in the earlier section. For more information about creating an AWS account, see [How do I create and activate a new Amazon Web Services account?](https://aws.amazon.com/premiumsupport/knowledge-center/create-and-activate-aws-account/).
-* An Amazon EC2 key pair. You need this to log into the EC2 instance if you want to modify the Twitter handle that you're monitoring. For more information, see [Creating a Key Pair Using Amazon EC2](https://docs.aws.amazon.com/AWSEC2/latest/UserGuide/ec2-key-pairs.html#having-ec2-create-your-key-pair).
-* An [Apple Developer](https://developer.apple.com/) account. Note that the approach that we cover in this post focuses exclusively on iOS devices. You can implement this solution on Android devices.
+You need:
+- An AWS account with permissions to create EC2, Lambda, Kinesis, Comprehend, Elasticsearch, and Pinpoint resources
+- A [Twitter developer account](https://developer.twitter.com) with an approved app (consumer key, consumer secret, access token, access token secret)
+- A Mac with Xcode, Node.js, npm, and CocoaPods — the mobile app needs a real iOS device, the simulator won't work
+- AWS CLI installed and configured
+- An EC2 key pair (to SSH in later if you want to change the tracked handle)
+- An [Apple Developer](https://developer.apple.com/) account
 
 ### Setup
 #### Step 1: Create a Twitter application
